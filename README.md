@@ -11,6 +11,10 @@ This bash script automates the installation of NetBox, an open-source network do
 
 ## Usage
 
+You have two options to install NetBox:
+
+### Option 1: Manual Installation
+
 1. Open a terminal and create a new shell script file, e.g., `netbox_install.sh`.
 2. Copy the script from the `netbox_install.sh` file provided in this repository.
 3. Save the file and close the text editor.
@@ -20,6 +24,11 @@ This bash script automates the installation of NetBox, an open-source network do
 
 Please note that this script is provided as a starting point and may require modifications to fit your specific environment and requirements.
 
-For more information about NetBox, refer to the official documentation: [https://netbox.readthedocs.io/](https://netbox.readthedocs.io/).
+### Option 2: Automated Installation
 
-oficial documentaion here [https://docs.netbox.dev/](https://docs.netbox.dev/)
+If you prefer a one-liner to download and install the script automatically, you can use the following command:
+
+```bash
+curl -O https://raw.githubusercontent.com/Super8Four/NetBox-RHEL-Install/main/Netbox-Install.sh
+chmod +x Netbox-Install.sh
+sudo ./Netbox-Install.sh
