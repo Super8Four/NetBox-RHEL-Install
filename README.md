@@ -1,6 +1,7 @@
 # NetBox Installation Script
 
 **Note: This script has not been tested as of 6-13-2023. Please use it with caution and review it before running on a production system.**
+**This is still a Work in progress**
 
 This bash script automates the installation of NetBox, an open-source network documentation and management tool.
 
