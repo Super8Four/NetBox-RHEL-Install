@@ -21,4 +21,5 @@ This bash script automates the installation of NetBox, an open-source network do
 Please note that this script is provided as a starting point and may require modifications to fit your specific environment and requirements.
 
 For more information about NetBox, refer to the official documentation: [https://netbox.readthedocs.io/](https://netbox.readthedocs.io/).
+
 oficial documentaion here [https://docs.netbox.dev/](https://docs.netbox.dev/)
