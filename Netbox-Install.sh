@@ -4,24 +4,11 @@
 read -s -p "Enter SQL password for netbox user: " sql_password
 echo
 
-# Prompt for SSL certificate location or generate self-signed certificate
-read -p "Do you have an SSL certificate? [y/N]: " has_certificate
-
-if [[ $has_certificate =~ ^[Yy]$ ]]; then
-    read -p "Enter the path to the SSL certificate file: " certificate_file
-    read -p "Enter the path to the SSL private key file: " private_key_file
-else
-    echo "Generating self-signed SSL certificate..."
-    certificate_file="/etc/ssl/certs/netbox.crt"
-    private_key_file="/etc/ssl/private/netbox.key"
-
-    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout "$private_key_file" \
-        -out "$certificate_file"
-fi
+# Prompt for web server choice
+read -p "Choose a web server (Nginx/Apache): " web_server
 
 # Install packages with dnf
-sudo dnf install -y postgresql-server redis gcc libxml2-devel libxslt-devel libffi-devel libpq-devel openssl-devel redhat-rpm-config git python3 python3-pip python3-devel nginx
+sudo dnf install -y postgresql-server redis gcc libxml2-devel libxslt-devel libffi-devel libpq-devel openssl-devel redhat-rpm-config git python3 python3-pip python3-devel
 
 # Initialize and start PostgreSQL
 sudo postgresql-setup --initdb
@@ -83,11 +70,36 @@ cd /opt/netbox/netbox
 # Create superuser
 python3 manage.py createsuperuser
 
-# Configure Nginx
-sudo cp /opt/netbox/contrib/nginx.conf /etc/nginx/sites-available/netbox
-sudo rm /etc/nginx/sites-enabled/default
-sudo ln -s /etc/nginx/sites-available/netbox /etc/nginx/sites-enabled/netbox
-sudo systemctl restart nginx
+# Configure the chosen web server
+if [[ $web_server =~ ^[Nn](ginx)?$ ]]; then
+    # Install Nginx
+    sudo dnf install -y nginx
+
+    # Copy Nginx configuration file
+    sudo cp /opt/netbox/contrib/nginx.conf /etc/nginx/sites-available/netbox
+
+    # Enable Nginx configuration
+    sudo ln -s /etc/nginx/sites-available/netbox /etc/nginx/sites-enabled/netbox
+
+    # Restart Nginx
+    sudo systemctl restart nginx
+else
+    # Install Apache
+    sudo dnf install -y httpd
+
+    # Copy Apache configuration file
+    sudo cp /opt/netbox/contrib/apache.conf /etc/httpd/conf.d/netbox.conf
+
+    # Enable required Apache modules
+    sudo dnf install -y mod_ssl
+    sudo a2enmod ssl proxy proxy_http headers rewrite
+
+    # Enable the NetBox site
+    sudo a2ensite netbox
+
+    # Restart Apache
+    sudo systemctl restart httpd
+fi
 
 # Run NetBox upgrade script
 sudo /opt/netbox/upgrade.sh
