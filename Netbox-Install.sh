@@ -7,6 +7,12 @@ echo
 # Prompt for web server choice
 read -p "Choose a web server (Nginx/Apache): " web_server
 
+# Check if Redis is installed and running
+if ! command -v redis-cli &> /dev/null || ! redis-cli ping &> /dev/null; then
+    echo "ERROR: Redis is not installed or not running. Please install and configure Redis before running this script."
+    exit 1
+fi
+
 # Install packages with dnf
 sudo dnf install -y postgresql-server redis gcc libxml2-devel libxslt-devel libffi-devel libpq-devel openssl-devel redhat-rpm-config git python3 python3-pip python3-devel
 
